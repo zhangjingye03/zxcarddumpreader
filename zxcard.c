@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define MAXLEN 1000
 
 struct zxcard_sec0 {
   unsigned char UID[5];
@@ -60,6 +62,30 @@ struct zxcard_sec2 {
   unsigned char keyB[6];
 };
 
+/*char tmpGlobal[MAXLEN];
+unsigned char getHex( unsigned short size, unsigned char contentP[] ) {
+
+  for ( int i = 0; i < MAXLEN; i++ ) {
+    tmpGlobal[i] = "\0";
+  }
+
+  unsigned char tmp[size + 1];
+  for ( int i = 0; i < size; i++ ) {
+    tmp[i] = *(contentP + i);
+    printf("\ncurrent pointer @ %d, ASCII: %c", contentP + i, *(contentP + i));
+  }
+  tmp[size] = "\0";
+
+  memcpy( tmpGlobal, tmp, size + 1 );
+  return tmpGlobal;
+}*/
+void printHex( unsigned short size, unsigned char contentP[], unsigned short isShowASCII ) {
+  for ( int i = 0; i < size; i++ ) {
+    if (isShowASCII) printf( "%c", *(contentP + i));
+    else printf( "%x", *(contentP + i) );
+  }
+}
+
 int main( int argc, char* argv[] ){
   //printf( "argc: %d, argv[0]: %c\n", argc, argv[1]);
   /*char a[2]; a[0] = 0x32; a[1] = 0x25;
@@ -77,11 +103,41 @@ int main( int argc, char* argv[] ){
   long dumpsize = ftell( dump ); //get bytes count
   printf( "\nFile size: %d", dumpsize );
 
+  fseek( dump, 0, SEEK_SET ); //seek to the file head
   if ( dumpsize == 192 ) { //mini dump
-    unsigned char buffer[192];
-    fread( &buffer, 192, 1, dump ); //size_t fread ( void *buffer, size_t size, size_t count, FILE *stream) ;
-    //TODO
-    printf("\nFile Hex: %c", buffer);
+    //read file into structs
+    struct zxcard_sec0 sec0;
+    fread( &sec0, 64, 1, dump ); //size_t fread ( void *buffer, size_t size, size_t count, FILE *stream) ;
+    struct zxcard_sec1 sec1;
+    fread( &sec1, 64, 1, dump );
+    struct zxcard_sec2 sec2;
+    fread( &sec2, 64, 1, dump );
+
+    printf("\n\n----------Sector 0----------");
+    printf("\nCard UID: "); printHex( 5, &sec0.UID, 0 );
+    printf("\nCard default sign: "); printHex( 8, &sec0.defaultSignature, 1 );
+    printf("\nSec0 keyA: "); printHex( 8, &sec0.keyA, 0 );
+    printf("\nSec0 keyB: "); printHex( 8, &sec0.keyB, 0 );
+    printf("\nSec0 ACs: "); printHex( 8, &sec0.ACs, 0 );
+
+    unsigned offset = 0x00;
+    if ( sec1.countA < sec1.countB ) offset = 0x10;
+    printf("\n\n----------Sector 1----------");
+    printf("\nCurrent balance: RMB ");
+    printHex( 2, &sec1.decBalanceIntA + offset, 0 ); printf(".");
+    printHex( 1, &sec1.decBalanceFloatA + offset, 0 );
+    printf("\nLast payment at POS: "); printHex( 1, &sec1.payPosIdA + offset, 0 );
+    printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountA + offset, 0 ); printf(" times");
+    printf("\nTotal payment %d times", *( &sec1.countA + offset ));
+    unsigned short checksum = 0; unsigned char t;
+    for ( int i = 0; i < 0x10; i++ ) {
+      memcpy( &t, &sec1.countA + offset + i, 1);
+      printf("\nc%d: %x",i,t);
+      checksum += t; //*( &sec1.countA + offset + i );
+    }
+    printf("\nChecksum %x", checksum);
+
+  //  printf("\nFile Hex: %c", getHex(8,&sec0.defaultSignature));
   } else if ( dumpsize == 1024 ) { //full dump
 
   } else {
