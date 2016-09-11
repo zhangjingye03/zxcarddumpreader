@@ -182,6 +182,7 @@ int main( int argc, char* argv[] ){
   } else {
     printf( "\nWrong file size. Must be 192B (0~2 sectors) or 1KB (0~15 sectors)." ); return 3;
   }
+  return 0;
 }
 
 /* old fault method ?
