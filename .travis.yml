@@ -3,3 +3,4 @@ compiler:
   - gcc
 script:
   - gcc -o zxcarddumpreader ./zxcard.c
+  - ./zxcarddumpreader demo.bin
