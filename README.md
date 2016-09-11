@@ -13,13 +13,48 @@ $ gcc -o zxcarddumpreader zxcard.c
 $ ./zxcarddumpreader
 No input file path specified.
 
-Usage:  <file>
+Usage:  zxcarddumpreader <file>
 The parameter <file> is your zx card dump file
 Either 1KB version with all sectors or 192B version with first three blocks is acceptable.
 
+$ ./zxcarddumpreader demo.bin
+
+ZX Card File Dump Reader
+
+File size: 192
+
+------------Sector 0------------
+Card UID: 2333333333
+Card default sign: bcdefghi
+Sec0 keyA: ffffffffffff
+Sec0 keyB: ffffffffffff
+Sec0 ACs: ff078069
+
+------------Sector 1------------
+Zone A checksum = 0x1ff, OK.
+Zone B checksum = 0x1ff, OK.
+
+--- Zone B ---
+Last balance: RMB 0125.80
+Last payment at POS 08
+Continuous payment 01 times
+Last total payment 345 times
+
+--- Zone A ---
+Current balance: RMB 0100.86
+Current payment at POS 04
+Continuous payment 01 times
+Total payment 346 times
+
+--- Zone C ---
+Card No.20146317
+Sec0 keyA: ffffffffffff
+Sec0 keyB: ffffffffffff
+Sec0 ACs: ff078069
+
 ```
 
-饭卡dump文件请自行获取
+饭卡dump文件请自行获取；已在`Cygwin x64`环境下编译并测试成功。
 
 ### License
 
