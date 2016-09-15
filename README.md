@@ -62,7 +62,7 @@ Sec0 ACs: ff078069
 
 P.S. 里面还有大堆大堆的不确定的block。如果发现已知block判断错误或者发现某个block新的作用，请开pr/issue告诉我。
 
-![demo](https://raw.githubusercontent.com/zhangjingye03/zxcarddumpreader/demo.png)
+![demo](https://raw.githubusercontent.com/zhangjingye03/zxcarddumpreader/master/demo.png)
 
 ### License
 
