@@ -105,7 +105,7 @@ int main( int argc, char* argv[] ){
   FILE* dump;
   dump = fopen( argv[1], "rb" ); //b for binary
   if ( dump == NULL ) {
-    printf( "\nFile %d not found.", argv[1]); return 2;
+    printf( "\nFile %c not found.", argv[1]); return 2;
   }
   fseek( dump, 0, SEEK_END ); //seek to the file end
   long dumpsize = ftell( dump ); //get bytes count
@@ -174,10 +174,10 @@ int main( int argc, char* argv[] ){
     }
 
     printf("\n\n--- Zone C ---");
-    printf("\nCard No.%d", ntohs(sec1.cardNum) + 0x013328c6 );
-    printf("\nSec0 keyA: "); printHex( 6, &sec0.keyA, 0 );
-    printf("\nSec0 keyB: "); printHex( 6, &sec0.keyB, 0 );
-    printf("\nSec0 ACs: "); printHex( 4, &sec0.ACs, 0 );
+    printf("\nCard No. %d", ntohs(sec1.cardNum) + 0x013328c6 );
+    printf("\nSec1 keyA: "); printHex( 6, &sec0.keyA, 0 );
+    printf("\nSec1 keyB: "); printHex( 6, &sec0.keyB, 0 );
+    printf("\nSec1 ACs: "); printHex( 4, &sec0.ACs, 0 );
     //printf("\n\n----------Sector 1----------");
   } else {
     printf( "\nWrong file size. Must be 192B (0~2 sectors) or 1KB (0~15 sectors)." ); return 3;
