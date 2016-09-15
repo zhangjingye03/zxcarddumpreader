@@ -56,6 +56,14 @@ Sec0 ACs: ff078069
 
 饭卡dump文件请自行获取；已在`Cygwin x64`环境下编译并测试成功。
 
+### 饭卡结构
+
+具体结构见`zxcard.c`中的结构体声明。详细信息请用`WinHex`加载`WinHex.pos`并读取饭卡dump文件。
+
+P.S. 里面还有大堆大堆的不确定的block。如果发现已知block判断错误或者发现某个block新的作用，请开pr/issue告诉我。
+
+![demo](https://raw.githubusercontent.com/zhangjingye03/zxcarddumpreader/demo.png)
+
 ### License
 
 GNU GENERAL PUBLIC LICENSE Version 3
