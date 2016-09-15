@@ -2,5 +2,5 @@ language: c
 compiler:
   - gcc
 script:
-  - gcc -o zxcarddumpreader ./zxcard.c
+  - gcc -o zxcarddumpreader ./zxcarddumpreader.c
   - ./zxcarddumpreader demo.bin

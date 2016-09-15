@@ -9,7 +9,7 @@
 ### 使用方法
 
 ```
-$ gcc -o zxcarddumpreader zxcard.c
+$ gcc -o zxcarddumpreader zxcarddumpreader.c
 $ ./zxcarddumpreader
 No input file path specified.
 
@@ -24,6 +24,7 @@ ZX Card File Dump Reader
 File size: 192
 
 ------------Sector 0------------
+
 Card UID: 2333333333
 Card default sign: bcdefghi
 Sec0 keyA: ffffffffffff
@@ -31,6 +32,7 @@ Sec0 keyB: ffffffffffff
 Sec0 ACs: ff078069
 
 ------------Sector 1------------
+
 Zone A checksum = 0x1ff, OK.
 Zone B checksum = 0x1ff, OK.
 
@@ -47,14 +49,25 @@ Continuous payment 01 times
 Total payment 346 times
 
 --- Zone C ---
-Card No.20146317
-Sec0 keyA: ffffffffffff
-Sec0 keyB: ffffffffffff
-Sec0 ACs: ff078069
+Card No. 20146317
+Sec1 keyA: ffffffffffff
+Sec1 keyB: ffffffffffff
+Sec1 ACs: ff078069
+
+------------Sector 2------------
+
+Card No. 20146317
+Unknown characteristic:
+0xd5 0x94 0x34 0x06 0xa2 0xf9
+Sec2 keyA: ffffffffffff
+Sec2 keyB: ffffffffffff
+Sec2 ACs: ff078069
+
+-------------E N D--------------
 
 ```
 
-饭卡dump文件请自行获取；已在`Cygwin x64`环境下编译并测试成功。
+饭卡dump文件请自行获取；已在`Cygwin x64`和`Travis Docker Ubuntu/Linaro 4.6.3 `环境下编译并测试成功。
 
 ### 饭卡结构
 
