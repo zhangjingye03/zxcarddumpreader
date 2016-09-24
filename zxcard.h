@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <arpa/inet.h>
+
 struct zxcard_sec0 {
   unsigned char UID[5];
   unsigned char unknown_3[2]; //fixed 0x08 0x04 (?)
@@ -88,4 +93,27 @@ void printHex( unsigned short size, unsigned char contentP[], unsigned char show
       else printf( "%x", *(contentP + i) );
     }
   }
+}
+
+float getBalance( unsigned char zonedata[16] ) {
+  /*char test[2];
+  sprintf(test, "%x", **(&sec1.decBalanceIntA+offset/2));
+  unsigned short bint = 0;
+  sscanf( test, "%d", &bint );
+  printf("\n\nx%x %x %d\n\n",**(&sec1.decBalanceIntA+offset/2),*(&sec1.decBalanceFloatA+offset-1),bint*100);*/
+  char x100[2], x1[2], xp01[2];
+  sprintf( x100, "%x", *(zonedata + 0x04) );
+  //printf("\nx100:%c", *x100 );
+  sprintf( x1, "%x", *(zonedata + 0x05) );
+  //printf("\nx1:%c", *x1 );
+  sprintf( xp01, "%x", *(zonedata + 0x06) );
+  //printf("\nxp01:%c", *xp01 );
+  unsigned int i100, i1, ip01; //XXX: Why cannot use short???
+  sscanf( x100, "%d", &i100 );
+  //printf("\ni100:%d", i100 );
+  sscanf( x1, "%d", &i1 );
+  //printf("\ni1:%d", i1 );
+  sscanf( xp01, "%d", &ip01 );
+  //printf("\nip01:%d", ip01 );
+  return i100 * 100 + i1 + ip01 * 0.01;
 }

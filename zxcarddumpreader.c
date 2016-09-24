@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <arpa/inet.h>
 #include "zxcard.h"
 
 int main( int argc, char* argv[] ){
@@ -64,20 +60,16 @@ int main( int argc, char* argv[] ){
     if ( hasE == 0 && sec1.countA > sec1.countB ) offset = 0x10;
 
     if ( offset == 0x00 ) printf("\n\n--- Zone A ---"); else printf("\n\n--- Zone B ---");
-    printf("\nLast balance: RMB ");
-    printHex( 2, &sec1.decBalanceIntA + offset / 2, 0 ); printf("."); // XXX: /2 for dword (?)
-    printHex( 1, &sec1.decBalanceFloatA + offset, 0 );
-    printf("\nLast payment at POS "); printHex( 1, &sec1.payPosIdA + offset, 0 );
-    printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountA + offset, 0 ); printf(" times");
+    printf("\nLast balance: RMB "); printf("%.2f", getBalance( &sec1.decBalanceFloatA + offset - 6 )); //prevent from dword addr calculation
+    printf("\nLast payment at month "); printHex( 1, &sec1.payPosIdA + offset, 0 );
+    //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountA + offset, 0 ); printf(" times");
     printf("\nLast total payment %d times", ntohs(*( &sec1.countA + offset / 2 )));
     //vice versa for another zone
     if ( hasE == 0 ) {
       if ( offset == 0x00 ) printf("\n\n--- Zone B ---"); else printf("\n\n--- Zone A ---");
-      printf("\nCurrent balance: RMB ");
-      printHex( 2, &sec1.decBalanceIntB - offset / 2, 0 ); printf(".");
-      printHex( 1, &sec1.decBalanceFloatB - offset, 0 );
-      printf("\nCurrent payment at POS "); printHex( 1, &sec1.payPosIdB - offset, 0 );
-      printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountB - offset, 0 ); printf(" times");
+      printf("\nCurrent balance: RMB "); printf("%.2f", getBalance( &sec1.decBalanceFloatB - offset - 6 ));
+      printf("\nCurrent payment at month "); printHex( 1, &sec1.payPosIdB - offset, 0 );
+      //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountB - offset, 0 ); printf(" times");
       printf("\nTotal payment %d times", ntohs(*( &sec1.countB - offset / 2 )));
     }
 
