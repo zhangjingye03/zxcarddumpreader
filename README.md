@@ -37,15 +37,13 @@ Zone A checksum = 0x1ff, OK.
 Zone B checksum = 0x1ff, OK.
 
 --- Zone B ---
-Last balance: RMB 0125.80
-Last payment at POS 08
-Continuous payment 01 times
+Last balance: RMB 125.80
+Last payment at month 08
 Last total payment 345 times
 
 --- Zone A ---
-Current balance: RMB 0100.86
-Current payment at POS 04
-Continuous payment 01 times
+Current balance: RMB 100.86
+Current payment at month 04
 Total payment 346 times
 
 --- Zone C ---
@@ -65,13 +63,14 @@ Sec2 ACs: ff078069
 
 -------------E N D--------------
 
+
 ```
 
-饭卡dump文件请自行获取；已在`Cygwin x64`和`Travis Docker Ubuntu/Linaro 4.6.3 `环境下编译并测试成功。
+饭卡dump文件请自行获取；已在`Cygwin x64`、`Travis Docker Ubuntu/Linaro 4.6.3`、`Kali Linux ARMv8`等环境下编译并测试成功。
 
 ### 饭卡结构
 
-具体结构见`zxcard.c`中的结构体声明。详细信息请用`WinHex`加载`WinHex.pos`并读取饭卡dump文件。
+具体结构见`zxcard.h`中的结构体声明。详细信息请用`WinHex`加载`WinHex.pos`并读取饭卡dump文件。
 
 P.S. 里面还有大堆大堆的不确定的block。如果发现已知block判断错误或者发现某个block新的作用，请开pr/issue告诉我。
 
