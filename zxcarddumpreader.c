@@ -1,6 +1,6 @@
 #include "zxcard.h"
 
-int main( int argc, char* argv[] ){
+int main( int argc, char *argv[] ){
   printf( "\nZX Card File Dump Reader\n");
   if ( argc < 2 ) {
     printf( "No input file path specified.\n\nUsage: %c <file>\nThe parameter <file> is your zx card dump file\nEither 1KB version with all sectors or 192B version with first three blocks is acceptable.", argv[0]); return 1;
@@ -9,7 +9,7 @@ int main( int argc, char* argv[] ){
   FILE* dump;
   dump = fopen( argv[1], "rb" ); //b for binary
   if ( dump == NULL ) {
-    printf( "\nFile %c not found.", argv[1]); return 2;
+    printf( "\nFile %c not found.", *argv[1]); return 2;
   }
   fseek( dump, 0, SEEK_END ); //seek to the file end
   long dumpsize = ftell( dump ); //get bytes count
@@ -64,6 +64,7 @@ int main( int argc, char* argv[] ){
     printf("\nLast payment at month "); printHex( 1, &sec1.payPosIdA + offset, 0 );
     //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountA + offset, 0 ); printf(" times");
     printf("\nLast total payment %d times", ntohs(*( &sec1.countA + offset / 2 )));
+    float balance1 = getBalance( &sec1.decBalanceFloatA + offset - 6 );
     //vice versa for another zone
     if ( hasE == 0 ) {
       if ( offset == 0x00 ) printf("\n\n--- Zone B ---"); else printf("\n\n--- Zone A ---");
@@ -71,6 +72,8 @@ int main( int argc, char* argv[] ){
       printf("\nCurrent payment at month "); printHex( 1, &sec1.payPosIdB - offset, 0 );
       //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountB - offset, 0 ); printf(" times");
       printf("\nTotal payment %d times", ntohs(*( &sec1.countB - offset / 2 )));
+      float balance2 = getBalance( &sec1.decBalanceFloatB - offset - 6 );
+      printf("\n\nLast time you spent RMB %.2f", balance1 - balance2 );
     }
 
     printf("\n\n--- Zone C ---");
