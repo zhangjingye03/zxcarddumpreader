@@ -26,7 +26,13 @@ int main( int argc, char *argv[] ){
     fread( &sec2, 64, 1, dump );
 
     printf("\n\n------------Sector 0------------\n");
-    printf("\nCard UID: "); printHex( 5, &sec0.UID, 0 );
+    printf("\nCard UID: "); printHex( 4, &sec0.UID, 0 );
+    printf("\nCard BCC: "); printHex( 1, &sec0.bitCheckCount, 0 );
+    if ( sec0.bitCheckCount != getBitCheckCount( &sec0.UID ) ) { printf(", not equals to calculated result %x.\n(!) The card may be broken.", getBitCheckCount( &sec0.UID ) ); }
+    if ( sec0.ATQA != 0x0004 || sec0.SAK != 0x08 ) {
+      printf("\n(!) ATQA=0x%x, SAK=0x%x is not a zxcard.", sec0.ATQA, sec0.SAK);
+      return -2;
+    }
     printf("\nCard default sign: "); printHex( 8, &sec0.defaultSignature, 1 );
     printf("\nSec0 keyA: "); printHex( 6, &sec0.keyA, 0 );
     printf("\nSec0 keyB: "); printHex( 6, &sec0.keyB, 0 );
@@ -54,37 +60,39 @@ int main( int argc, char *argv[] ){
     }
     //Check corruption
     if ( !verifySum(ac) && !verifySum(bc) ) {
-      printf("\n\nEither your zx card or the file dump was corrupt.\nTerminating."); return -1;
+      printf("\n\n(!) Either your zx card or the file dump was corrupt.\nTerminating."); return -1;
     }
     //Check total payment count and select A or B
     if ( hasE == 0 && sec1.countA > sec1.countB ) offset = 0x10;
 
     if ( offset == 0x00 ) printf("\n\n--- Zone A ---"); else printf("\n\n--- Zone B ---");
     printf("\nLast balance: RMB "); printf("%.2f", getBalance( &sec1.decBalanceFloatA + offset - 6 )); //prevent from dword addr calculation
-    printf("\nLast payment at month "); printHex( 1, &sec1.payPosIdA + offset, 0 );
-    //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountA + offset, 0 ); printf(" times");
+    printf("\nLast payment at month "); printHex( 1, &sec1.payMonthA + offset, 0 );
     printf("\nLast total payment %d times", ntohs(*( &sec1.countA + offset / 2 )));
     float balance1 = getBalance( &sec1.decBalanceFloatA + offset - 6 );
     //vice versa for another zone
     if ( hasE == 0 ) {
       if ( offset == 0x00 ) printf("\n\n--- Zone B ---"); else printf("\n\n--- Zone A ---");
       printf("\nCurrent balance: RMB "); printf("%.2f", getBalance( &sec1.decBalanceFloatB - offset - 6 ));
-      printf("\nCurrent payment at month "); printHex( 1, &sec1.payPosIdB - offset, 0 );
-      //printf("\nContinuous payment "); printHex( 1, &sec1.seqPayCountB - offset, 0 ); printf(" times");
+      printf("\nCurrent payment at month "); printHex( 1, &sec1.payMonthB - offset, 0 );
       printf("\nTotal payment %d times", ntohs(*( &sec1.countB - offset / 2 )));
       float balance2 = getBalance( &sec1.decBalanceFloatB - offset - 6 );
       printf("\n\nLast time you spent RMB %.2f", balance1 - balance2 );
     }
 
     printf("\n\n--- Zone C ---");
-    printf("\nCard No. %d", ntohs(sec1.cardNum) + 0x013328c6 );
+    //printf("\nCard No. %d", ntohs(sec1.cardNum) + 0x013328c6 );
     printf("\nSec1 keyA: "); printHex( 6, &sec1.keyA, 0 );
     printf("\nSec1 keyB: "); printHex( 6, &sec1.keyB, 0 );
     printf("\nSec1 ACs: "); printHex( 4, &sec1.ACs, 0 );
 
     printf("\n\n------------Sector 2------------\n");
-    printf("\nCard No. %d", ntohs(sec2.cardNum) + 0x013328c6 );
-    if ( sec1.cardNum != sec2.cardNum ) { printf( ", different from sector 1 !"); }
+    int cardno = 0;
+    if ( sec1.distributionTime == 0x17 ) cardno = ntohs(sec2.cardNum) + 0x013328c6;
+    if ( sec1.distributionTime == 0x18 ) cardno = ntohs(sec2.cardNum) + 0x01333751;
+    if ( cardno != 0 ) printf("\nCard No. %d", cardno );
+    else printf("\n(!) Unknown card No. %d with distributionTime at %d.", sec2.cardNum, sec1.distributionTime );
+    //if ( sec1.cardNum != sec2.cardNum ) { printf( ", different from sector 1 !"); }
     printf("\nUnknown characteristic:\n");
     printHex( 6, &sec2.unknown, 2 );
     printf("\nSec2 keyA: "); printHex( 6, &sec2.keyA, 0 );
